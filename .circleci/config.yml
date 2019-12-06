@@ -1,0 +1,70 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: docker:18.06.0-ce-git
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --no-cache py-pip=10.0.1-r0
+            pip install docker-compose==1.22.0
+            mkdir -p /artifacts
+      - restore_cache:
+          keys:
+            - v1-{{ .Branch }}
+          paths:
+            - /caches/docker.tar
+      - run:
+          name: Load Docker image layer cache
+          command: |
+            set +o pipefail
+            docker load -i /caches/docker.tar | true
+      - run:
+          name: Build
+          command: |
+            docker build --cache-from=docker -t pagespeedinsights-collector:${CIRCLE_SHA1} .
+      - run:
+          name: Save Docker image layer cache
+          command: |
+            mkdir -p /caches
+            docker save -o /caches/docker.tar pagespeedinsights-collector
+      - save_cache:
+          key: v1-{{ .Branch }}-{{ epoch }}
+          paths:
+            - /caches/docker.tar
+      - run:
+          name: Tests
+          command: |
+            docker run pagespeedinsights-collector:${CIRCLE_SHA1} npm test
+      - run:
+          name: Report npm deps
+          command: |
+            docker run pagespeedinsights-collector:${CIRCLE_SHA1} npm outdated > /artifacts/npm-outdated.txt 2>&1 || true
+      - run:
+          name: Install trivy
+          command: |
+            apk add --update curl
+            VERSION=$(
+                curl --silent "https://api.github.com/repos/aquasecurity/trivy/releases/latest" | \
+                grep '"tag_name":' | \
+                sed -E 's/.*"v([^"]+)".*/\1/'
+            )
+            wget https://github.com/aquasecurity/trivy/releases/download/v${VERSION}/trivy_${VERSION}_Linux-64bit.tar.gz
+            tar zxvf trivy_${VERSION}_Linux-64bit.tar.gz trivy
+            mv trivy /usr/local/bin
+      - run:
+          name: Scan the local image with trivy
+          command: trivy --exit-code 0 --no-progress pagespeedinsights-collector:${CIRCLE_SHA1} > /artifacts/trivy.txt
+    #   - deploy:
+    #       name: Push Docker image
+    #       command: |
+    #         if [ "${CIRCLE_BRANCH}" == "master" ]; then
+    #           docker tag pagespeedinsights-collector:${CIRCLE_SHA1} ${DOCKER_REGISTRY}/digital-agency/pagespeedinsights-collector:${CIRCLE_SHA1}
+    #           docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} ${DOCKER_REGISTRY}
+    #           docker push ${DOCKER_REGISTRY}/digital-agency/pagespeedinsights-collector:${CIRCLE_SHA1}
+    #         fi
+      - store_artifacts:
+          path: /artifacts
