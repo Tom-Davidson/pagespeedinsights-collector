@@ -1,0 +1,13 @@
+version: '3'
+services:
+  collector:
+    container_name: 'pagespeedinsights-collector'
+    image: node:12.13.1-alpine3.10
+    working_dir: /app
+    volumes:
+     - .:/app
+    environment:
+     - APIKey
+    ports:
+     - "3000:3000"
+    command: ["npm", "start", "dev"]

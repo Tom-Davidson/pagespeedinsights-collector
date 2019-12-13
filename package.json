@@ -4,7 +4,9 @@
   "description": "Collect Google's PageSpeed Insights and graph over time.",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\""
+    "test": "echo \"Error: no test specified\"",
+    "start": "node src/index.js",
+    "dev": "npm install && node src/index.js"
   },
   "repository": {
     "type": "git",
@@ -15,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/Tom-Davidson/pagespeedinsights-collector/issues"
   },
-  "homepage": "https://github.com/Tom-Davidson/pagespeedinsights-collector#readme"
+  "homepage": "https://github.com/Tom-Davidson/pagespeedinsights-collector#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
 }
