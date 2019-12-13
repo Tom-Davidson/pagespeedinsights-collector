@@ -60,13 +60,13 @@ jobs:
           command: |
             trivy --exit-code 0 --no-progress pagespeedinsights-collector:${CIRCLE_SHA1} | tee /artifacts/trivy-all.txt
             trivy --exit-code 0 --no-progress --ignore-unfixed pagespeedinsights-collector:${CIRCLE_SHA1} | tee /artifacts/trivy-fixable.txt
-        #   - deploy:
-    #       name: Push Docker image
-    #       command: |
-    #         if [ "${CIRCLE_BRANCH}" == "master" ]; then
-    #           docker tag pagespeedinsights-collector:${CIRCLE_SHA1} ${DOCKER_REGISTRY}/digital-agency/pagespeedinsights-collector:${CIRCLE_SHA1}
-    #           docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} ${DOCKER_REGISTRY}
-    #           docker push ${DOCKER_REGISTRY}/digital-agency/pagespeedinsights-collector:${CIRCLE_SHA1}
-    #         fi
+      - deploy:
+          name: Push Docker image
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              docker tag pagespeedinsights-collector:${CIRCLE_SHA1} ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_SPACE}/pagespeedinsights-collector:${CIRCLE_SHA1}
+              docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} ${DOCKER_REGISTRY}
+              docker push ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_SPACE}/pagespeedinsights-collector:${CIRCLE_SHA1}
+            fi
       - store_artifacts:
           path: /artifacts
