@@ -19,6 +19,6 @@
     "dev": "npm install && node src/index.js"
   },
   "devDependencies": {
-    "nodemon": "^2.0.2"
+    "nodemon": "2.0.2"
   }
 }
