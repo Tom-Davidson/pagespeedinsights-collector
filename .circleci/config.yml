@@ -42,7 +42,7 @@ jobs:
       - run:
           name: Report npm deps
           command: |
-            docker run pagespeedinsights-collector:${CIRCLE_SHA1} npm outdated > /artifacts/npm-outdated.txt 2>&1 || true
+            docker run pagespeedinsights-collector:${CIRCLE_SHA1} npm outdated 2>&1 | tee /artifacts/npm-outdated.txt || true
       - run:
           name: Install trivy
           command: |
@@ -57,8 +57,10 @@ jobs:
             mv trivy /usr/local/bin
       - run:
           name: Scan the local image with trivy
-          command: trivy --exit-code 0 --no-progress pagespeedinsights-collector:${CIRCLE_SHA1} > /artifacts/trivy.txt
-    #   - deploy:
+          command: |
+            trivy --exit-code 0 --no-progress pagespeedinsights-collector:${CIRCLE_SHA1} | tee /artifacts/trivy-all.txt
+            trivy --exit-code 0 --no-progress --ignore-unfixed pagespeedinsights-collector:${CIRCLE_SHA1} | tee /artifacts/trivy-fixable.txt
+        #   - deploy:
     #       name: Push Docker image
     #       command: |
     #         if [ "${CIRCLE_BRANCH}" == "master" ]; then
