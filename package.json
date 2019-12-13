@@ -14,11 +14,12 @@
   },
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\"",
+    "test": "jest --coverage",
     "start": "node src/index.js",
     "dev": "npm install && node src/index.js"
   },
   "devDependencies": {
+    "jest": "24.9.0",
     "nodemon": "2.0.2"
   }
 }
