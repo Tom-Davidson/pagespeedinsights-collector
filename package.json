@@ -2,22 +2,22 @@
   "name": "pagespeedinsights-collector",
   "version": "1.0.0",
   "description": "Collect Google's PageSpeed Insights and graph over time.",
+  "author": "Tom Davidson",
+  "license": "MIT",
+  "homepage": "https://github.com/Tom-Davidson/pagespeedinsights-collector#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tom-Davidson/pagespeedinsights-collector.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Tom-Davidson/pagespeedinsights-collector/issues"
+  },
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\"",
     "start": "node src/index.js",
     "dev": "npm install && node src/index.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Tom-Davidson/pagespeedinsights-collector.git"
-  },
-  "author": "Tom Davidson",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/Tom-Davidson/pagespeedinsights-collector/issues"
-  },
-  "homepage": "https://github.com/Tom-Davidson/pagespeedinsights-collector#readme",
   "devDependencies": {
     "nodemon": "^2.0.2"
   }
