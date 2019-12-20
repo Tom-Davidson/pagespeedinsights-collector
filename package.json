@@ -15,8 +15,10 @@
   "main": "src/index.js",
   "scripts": {
     "test": "jest --coverage",
-    "start": "node src/index.js",
-    "dev": "npm install && node src/index.js"
+    "start": "NODE_ENV=production node src/index.js",
+    "dev": "npm install && node src/index.js",
+    "perf": "NODE_ENV=production node --prof src/index.js",
+    "perf:report": "node --prof-process `ls -t isolate*.log | head -1` > debug-perf.txt"
   },
   "devDependencies": {
     "jest": "24.9.0",

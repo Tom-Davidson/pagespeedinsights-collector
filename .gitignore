@@ -1,3 +1,10 @@
+# Environment
 .env
+
+# Deps
 node_modules/
+
+# Generated in dev/test
 coverage/
+isolate*.log
+debug-perf.txt
