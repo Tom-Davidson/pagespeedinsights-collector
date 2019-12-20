@@ -17,11 +17,16 @@
     "test": "jest --coverage",
     "start": "NODE_ENV=production node src/index.js",
     "dev": "npm install && node src/index.js",
+    "dev:local": "node -r dotenv/config src/index.js",
     "perf": "NODE_ENV=production node --prof src/index.js",
     "perf:report": "node --prof-process `ls -t isolate*.log | head -1` > debug-perf.txt"
   },
   "devDependencies": {
     "jest": "24.9.0",
     "nodemon": "2.0.2"
+  },
+  "dependencies": {
+    "axios": "0.19.0",
+    "dotenv": "8.2.0"
   }
 }
