@@ -44,6 +44,9 @@ app.get('/', (req, res) => {
 	res.set('location', './metrics');
 	res.status(301).send();
 });
+app.get('/healthz', (req, res) => { // Kubernetes liveness probe endpoint
+	res.status(200).send();
+});
 app.listen(PORT, () => {
 	console.log(`Example api is listening on http://localhost:${PORT}`);
 });
