@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pagespeedinsights-collector-service
+  labels:
+    app: pagespeedinsights-collector
+spec:
+  ports:
+  - name: main
+    protocol: TCP
+    port: 80
+    targetPort: 3000
+  selector:
+    app: pagespeedinsights-collector

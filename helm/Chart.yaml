@@ -1,0 +1,7 @@
+name: Pagespeed Insights Collector
+version: 1.0.0
+description: Collect Google's PageSpeed Insights and graph over time.
+home: https://github.com/Tom-Davidson/pagespeedinsights-collector
+maintainers:
+    - name: Tom Davidson
+      url: https://github.com/Tom-Davidson
