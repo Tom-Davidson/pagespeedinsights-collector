@@ -14,7 +14,9 @@
   },
   "main": "src/index.js",
   "scripts": {
-    "test": "jest --coverage",
+    "test": "npm run test:code && npm run test:dockerfile",
+    "test:code": "jest --coverage",
+    "test:dockerfile": "docker run --rm -i hadolint/hadolint < ./Dockerfile",
     "start": "NODE_ENV=production node src/index.js",
     "dev": "npm install && node src/index.js",
     "dev:local": "node -r dotenv/config src/index.js",

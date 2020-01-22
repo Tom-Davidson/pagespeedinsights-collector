@@ -38,7 +38,7 @@ jobs:
       - run:
           name: Tests
           command: |
-            docker run pagespeedinsights-collector:${CIRCLE_SHA1} npm test
+            docker run pagespeedinsights-collector:${CIRCLE_SHA1} npm run test:code
       - run:
           name: Report npm deps
           command: |
