@@ -19,7 +19,7 @@
     "test:code": "jest --coverage",
     "test:dockerfile": "docker run --rm -i hadolint/hadolint < ./Dockerfile",
     "start": "NODE_ENV=production node src/index.js",
-    "dev": "npm run install && node src/index.js",
+    "dev": "npm run install && nodemon src/index.js",
     "dev:local": "nodemon -r dotenv/config src/index.js",
     "perf": "NODE_ENV=production node --prof src/index.js",
     "perf:report": "node --prof-process `ls -t isolate*.log | head -1` > debug-perf.txt"
