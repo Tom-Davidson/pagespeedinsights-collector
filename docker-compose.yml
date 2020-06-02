@@ -11,4 +11,4 @@ services:
       - PAGES
     ports:
      - "3000:3000"
-    command: ["npm", "start", "dev"]
+    command: ["npm", "run", "dev"]
