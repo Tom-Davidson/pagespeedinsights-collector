@@ -34,6 +34,7 @@ for (let page of pages) {
 
 const app = express();
 app.use(
+	// Prometheus endpoint
 	promMid({
 		metricsPath: '/metrics',
 		collectDefaultMetrics: true,
@@ -49,5 +50,5 @@ app.get('/healthz', (req, res) => {
 	res.status(200).send();
 });
 app.listen(PORT, () => {
-	console.log(`Example api is listening on http://localhost:${PORT}`);
+	console.log(`pagespeedinsights-collector is listening on http://localhost:${PORT}`);
 });
