@@ -17,9 +17,13 @@ Collect Google's PageSpeed Insights and graph over time.
   - `cp .env.example .env` using your API key and list of pages to track.
   - `npm install`
   - `npm run dev:local`
+  - Open [http://localhost:3000/metrics](http://localhost:3000/metrics) in your browser
 - Via docker:
   - `cp .env.example .env` using your API key and list of pages to track.
   - `docker-compose up`
+  - Available services:
+    - [pagespeedinsights-collector](http://localhost:3000/metrics)
+    - [prometheus](http://localhost:9090/)
   - if you make changes to `package.json` or `package-lock.json` please `rm -Rf ./node_modules/` in order for it to be re-installed from within the container
 
 ## Debugging
