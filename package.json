@@ -20,17 +20,17 @@
     "test:dockerfile": "docker run --rm -i hadolint/hadolint < ./Dockerfile",
     "start": "NODE_ENV=production node src/index.js",
     "dev": "npm run install && node src/index.js",
-    "dev:local": "node -r dotenv/config src/index.js",
+    "dev:local": "nodemon -r dotenv/config src/index.js",
     "perf": "NODE_ENV=production node --prof src/index.js",
     "perf:report": "node --prof-process `ls -t isolate*.log | head -1` > debug-perf.txt"
   },
   "devDependencies": {
+    "dotenv": "8.2.0",
     "jest": "26.0.1",
     "nodemon": "2.0.4"
   },
   "dependencies": {
     "axios": "0.19.2",
-    "dotenv": "8.2.0",
     "express": "4.17.1",
     "express-prometheus-middleware": "0.9.6",
     "prom-client": "12.0.0"
