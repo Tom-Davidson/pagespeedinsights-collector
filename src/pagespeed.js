@@ -7,7 +7,7 @@ module.exports = async function(page, apiKey) {
 		const data = response.data;
 		return data;
 	} catch (error) {
-		console.log(`Error fetching ${page} - ${error}`)
+		console.error(`Error fetching ${page} - ${error}`)
 		return null;
 	}
 };
