@@ -3,6 +3,7 @@ const express = require('express');
 const Prometheus = require('prom-client');
 const promMid = require('express-prometheus-middleware');
 const pagespeed = require('./pagespeed');
+const dataextractor = require('./dataextractor');
 
 const apiKey = process.env.APIKey;
 const pages = process.env.PAGES.split(',').map((page) => page.trim());
@@ -22,7 +23,7 @@ for (let page of pages) {
 		let data = await pagespeed(page, apiKey);
 		if (data != null) {
 			try {
-				let ttfp = data.lighthouseResult.audits['first-contentful-paint'].numericValue;
+				let ttfp = dataextractor.first_contentful_paint(data);
 				metrics.first_contentful_paint.set({ page }, ttfp);
 			} catch (e) {
 				console.error(`data parsing failed, response dumped, url called: ${page}`);
