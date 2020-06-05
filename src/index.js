@@ -15,6 +15,12 @@ const metrics = {
 		name: 'first_contentful_paint',
 		help: 'Time to first contentful paint, more info here: https://web.dev/first-contentful-paint/',
 		labelNames: [ 'page' ]
+	}),
+	first_cpu_idle: new Prometheus.Gauge({
+		name: 'first_cpu_idle',
+		help:
+			"First CPU Idle marks the first time at which the page's main thread is quiet enough to handle input.  https://web.dev/first-cpu-idle.",
+		labelNames: [ 'page' ]
 	})
 };
 
@@ -25,6 +31,7 @@ for (let page of pages) {
 			try {
 				let ttfp = dataextractor.first_contentful_paint(data);
 				metrics.first_contentful_paint.set({ page }, ttfp);
+				metrics.first_cpu_idle.set({ page }, dataextractor.first_cpu_idle(data));
 			} catch (e) {
 				console.error(`data parsing failed, response dumped, url called: ${page}`);
 				fs.writeFileSync('response.json', data, { mode: 0o755 });
