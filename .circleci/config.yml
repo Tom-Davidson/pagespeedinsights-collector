@@ -1,8 +1,12 @@
-version: 2
+version: 2.1
+orbs:
+  octopus-cli: octopusdeploylabs/octopus-cli@0.0.2
 jobs:
   build:
     docker:
       - image: docker:18.06.0-ce-git
+    executor:
+      name: octopus-cli/default
     steps:
       - checkout
       - setup_remote_docker
@@ -68,5 +72,13 @@ jobs:
               docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} ${DOCKER_REGISTRY}
               docker push ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_SPACE}/pagespeedinsights-collector:${CIRCLE_SHA1}
             fi
+      - octopus-cli/install-tools
+      - octopus-cli/deploy-release:
+          api_key: OCTOPUS_API_KEY
+          deploy_to: Production
+          progress: true
+          project: pagespeedinsights-collector
+          release_number: ${CIRCLE_BRANCH}-${CIRCLE_SHA1}
+          server: OCTOPUS_SERVER_URL
       - store_artifacts:
           path: /artifacts
