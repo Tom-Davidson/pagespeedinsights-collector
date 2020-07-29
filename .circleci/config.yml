@@ -72,11 +72,13 @@ jobs:
           name: Create release in Octopus
           command: |
             if [ "${CIRCLE_BRANCH}" == "octopus" ]; then
-              npx octopus-deploy release create \
-                --host ${OCTOPUS_SERVER_URL} \
-                --apiKey ${OCTOPUS_API_KEY} \
-                --projectSlugOrId pagespeedinsights-collector \
-                --releaseVersion ${CIRCLE_BUILD_NUM}.${CIRCLE_SHA1}
+              docker run \
+                pagespeedinsights-collector:${CIRCLE_SHA1} \
+                npx octopus-deploy release create \
+                  --host ${OCTOPUS_SERVER_URL} \
+                  --apiKey ${OCTOPUS_API_KEY} \
+                  --projectSlugOrId pagespeedinsights-collector \
+                  --releaseVersion ${CIRCLE_BUILD_NUM}.${CIRCLE_SHA1}
             fi
       - store_artifacts:
           path: /artifacts
