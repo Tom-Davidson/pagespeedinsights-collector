@@ -71,7 +71,7 @@ jobs:
       - run:
           name: Create release in Octopus
           command: |
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+            if [ "${CIRCLE_BRANCH}" == "octopus" ]; then
               npx octopus-deploy release create \
                 --host ${OCTOPUS_SERVER_URL} \
                 --apiKey ${OCTOPUS_API_KEY} \
