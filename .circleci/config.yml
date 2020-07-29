@@ -79,7 +79,8 @@ jobs:
                   --host ${OCTOPUS_SERVER_URL} \
                   --apiKey ${OCTOPUS_API_KEY} \
                   --projectSlugOrId pagespeedinsights-collector \
-                  --releaseVersion ${VERSION}.${CIRCLE_BUILD_NUM}
+                  --releaseVersion ${VERSION}.${CIRCLE_BUILD_NUM} \
+                  --packageVersion ${CIRCLE_SHA1}
             fi
       - store_artifacts:
           path: /artifacts
