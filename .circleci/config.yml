@@ -25,7 +25,8 @@ jobs:
       - run:
           name: Build
           command: |
-            docker build --cache-from=docker -t pagespeedinsights-collector:${CIRCLE_SHA1} .
+            VERSION=$(awk '/version/{gsub(/("|",)/,"",$2);print $2};' package.json)
+            docker build --cache-from=docker -t pagespeedinsights-collector:${VERSION}-${CIRCLE_BUILD_NUM} .
       - run:
           name: Save Docker image layer cache
           command: |
@@ -47,13 +48,13 @@ jobs:
           name: Install trivy
           command: |
             apk add --update curl
-            VERSION=$(
+            TRIVY_VERSION=$(
                 curl --silent "https://api.github.com/repos/aquasecurity/trivy/releases/latest" | \
                 grep '"tag_name":' | \
                 sed -E 's/.*"v([^"]+)".*/\1/'
             )
-            wget https://github.com/aquasecurity/trivy/releases/download/v${VERSION}/trivy_${VERSION}_Linux-64bit.tar.gz
-            tar zxvf trivy_${VERSION}_Linux-64bit.tar.gz trivy
+            wget https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz
+            tar zxvf trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz trivy
             mv trivy /usr/local/bin
       - run:
           name: Scan the local image with trivy
