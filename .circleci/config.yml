@@ -74,9 +74,14 @@ jobs:
             if [ "${CIRCLE_BRANCH}" == "octopus" ]; then
               VERSION=$(awk '/version/{gsub(/("|",)/,"",$2);print $2};' package.json)
               IMAGE_VERSION="${VERSION}-${CIRCLE_BUILD_NUM}"
+              # GitHub Package Repo
               docker tag pagespeedinsights-collector:${IMAGE_VERSION} ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_SPACE}/pagespeedinsights-collector:${IMAGE_VERSION}
-              docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} ${DOCKER_REGISTRY}
+              echo ${DOCKER_PASSWORD2} | docker login -u ${DOCKER_USERNAME} --password-stdin ${DOCKER_REGISTRY}
               docker push ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_SPACE}/pagespeedinsights-collector:${IMAGE_VERSION}
+              # Docker Hub
+              echo ${DOCKER_PASSWORD2} | docker login -u ${DOCKER_USERNAME2} --password-stdin
+              docker tag pagespeedinsights-collector:${IMAGE_VERSION} ${DOCKER_REGISTRY_SPACE2}/pagespeedinsights-collector:${IMAGE_VERSION}
+              docker push ${DOCKER_REGISTRY_SPACE2}/pagespeedinsights-collector:${IMAGE_VERSION}
             fi
       - run:
           name: Create release in Octopus
