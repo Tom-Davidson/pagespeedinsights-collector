@@ -60,13 +60,14 @@ jobs:
           command: |
             trivy --exit-code 0 --no-progress pagespeedinsights-collector:${CIRCLE_SHA1} | tee /artifacts/trivy-all.txt
             trivy --exit-code 0 --no-progress --ignore-unfixed pagespeedinsights-collector:${CIRCLE_SHA1} | tee /artifacts/trivy-fixable.txt
-      - deploy:
+      - run:
           name: Push Docker image
           command: |
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              docker tag pagespeedinsights-collector:${CIRCLE_SHA1} ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_SPACE}/pagespeedinsights-collector:${CIRCLE_SHA1}
+            if [ "${CIRCLE_BRANCH}" == "octopus" ]; then
+              VERSION=$(awk '/version/{gsub(/("|",)/,"",$2);print $2};' package.json)
+              docker tag pagespeedinsights-collector:${VERSION}-${CIRCLE_BUILD_NUM} ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_SPACE}/pagespeedinsights-collector:${VERSION}-${CIRCLE_BUILD_NUM}
               docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} ${DOCKER_REGISTRY}
-              docker push ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_SPACE}/pagespeedinsights-collector:${CIRCLE_SHA1}
+              docker push ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_SPACE}/pagespeedinsights-collector:${VERSION}-${CIRCLE_BUILD_NUM}
             fi
       - run:
           name: Create release in Octopus
@@ -74,13 +75,13 @@ jobs:
             if [ "${CIRCLE_BRANCH}" == "octopus" ]; then
               VERSION=$(awk '/version/{gsub(/("|",)/,"",$2);print $2};' package.json)
               docker run \
-                pagespeedinsights-collector:${CIRCLE_SHA1} \
+                pagespeedinsights-collector:${VERSION}-${CIRCLE_BUILD_NUM} \
                 npx octopus-deploy release create \
                   --host ${OCTOPUS_SERVER_URL} \
                   --apiKey ${OCTOPUS_API_KEY} \
                   --projectSlugOrId pagespeedinsights-collector \
-                  --releaseVersion ${VERSION}.${CIRCLE_BUILD_NUM} \
-                  --packageVersion ${CIRCLE_SHA1}
+                  --releaseVersion ${VERSION}-${CIRCLE_BUILD_NUM} \
+                  --packageVersion ${VERSION}-${CIRCLE_BUILD_NUM}
             fi
       - store_artifacts:
           path: /artifacts
