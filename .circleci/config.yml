@@ -5,18 +5,14 @@ jobs:
       - image: docker:18.06.0-ce-git
     steps:
       - checkout
-      - setup_remote_docker
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
           name: Install dependencies
           command: |
             apk add --no-cache py-pip=10.0.1-r0
             pip install docker-compose==1.22.0
             mkdir -p /artifacts
-      - restore_cache:
-          keys:
-            - v1-{{ .Branch }}
-          paths:
-            - /caches/docker.tar
       - run:
           name: Load Docker image layer cache
           command: |
@@ -28,15 +24,6 @@ jobs:
             VERSION=$(awk '/version/{gsub(/("|",)/,"",$2);print $2};' package.json)
             IMAGE_VERSION="${VERSION}-${CIRCLE_BUILD_NUM}"
             docker build --cache-from=docker -t pagespeedinsights-collector:${IMAGE_VERSION} .
-      - run:
-          name: Save Docker image layer cache
-          command: |
-            mkdir -p /caches
-            docker save -o /caches/docker.tar pagespeedinsights-collector
-      - save_cache:
-          key: v1-{{ .Branch }}-{{ epoch }}
-          paths:
-            - /caches/docker.tar
       - run:
           name: Tests
           command: |
@@ -75,9 +62,9 @@ jobs:
               VERSION=$(awk '/version/{gsub(/("|",)/,"",$2);print $2};' package.json)
               IMAGE_VERSION="${VERSION}-${CIRCLE_BUILD_NUM}"
               # GitHub Package Repo
-              docker tag pagespeedinsights-collector:${IMAGE_VERSION} ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_SPACE}/pagespeedinsights-collector:${IMAGE_VERSION}
-              echo ${DOCKER_PASSWORD2} | docker login -u ${DOCKER_USERNAME} --password-stdin ${DOCKER_REGISTRY}
-              docker push ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_SPACE}/pagespeedinsights-collector:${IMAGE_VERSION}
+              #docker tag pagespeedinsights-collector:${IMAGE_VERSION} ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_SPACE}/pagespeedinsights-collector:${IMAGE_VERSION}
+              #echo ${DOCKER_PASSWORD2} | docker login -u ${DOCKER_USERNAME} --password-stdin ${DOCKER_REGISTRY}
+              #docker push ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_SPACE}/pagespeedinsights-collector:${IMAGE_VERSION}
               # Docker Hub
               echo ${DOCKER_PASSWORD2} | docker login -u ${DOCKER_USERNAME2} --password-stdin
               docker tag pagespeedinsights-collector:${IMAGE_VERSION} ${DOCKER_REGISTRY_SPACE2}/pagespeedinsights-collector:${IMAGE_VERSION}
