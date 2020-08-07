@@ -63,8 +63,8 @@ jobs:
               VERSION=$(awk '/version/{gsub(/("|",)/,"",$2);print $2};' package.json)
               IMAGE_VERSION="${VERSION}-${CIRCLE_BUILD_NUM}"
               # GitHub Package Repo
+              echo ${DOCKER_PASSWORD2} | docker login ${DOCKER_REGISTRY} -u ${DOCKER_USERNAME} --password-stdin
               #docker tag pagespeedinsights-collector:${IMAGE_VERSION} ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_SPACE}/pagespeedinsights-collector:${IMAGE_VERSION}
-              #echo ${DOCKER_PASSWORD2} | docker login -u ${DOCKER_USERNAME} --password-stdin ${DOCKER_REGISTRY}
               #docker push ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_SPACE}/pagespeedinsights-collector:${IMAGE_VERSION}
               # Docker Hub
               echo ${DOCKER_PASSWORD2} | docker login -u ${DOCKER_USERNAME2} --password-stdin
