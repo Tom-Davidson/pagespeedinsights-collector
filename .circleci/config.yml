@@ -12,6 +12,13 @@ jobs:
             apk add --no-cache py-pip=10.0.1-r0
             pip install docker-compose==1.22.0
             mkdir -p /artifacts
+      - run:
+          name: Collect facts
+          command: |
+            VERSION=$(awk '/version/{gsub(/("|",)/,"",$2);print $2};' package.json)
+            echo ${VERSION}
+            IMAGE_VERSION="${VERSION}-${CIRCLE_BUILD_NUM}"
+            echo ${IMAGE_VERSION}
       - restore_cache:
           keys:
             - v1-{{ .Branch }}
@@ -25,8 +32,7 @@ jobs:
       - run:
           name: Build
           command: |
-            VERSION=$(awk '/version/{gsub(/("|",)/,"",$2);print $2};' package.json)
-            docker build --cache-from=docker -t pagespeedinsights-collector:${VERSION}-${CIRCLE_BUILD_NUM} .
+            docker build --cache-from=docker -t pagespeedinsights-collector:${IMAGE_VERSION} .
       - run:
           name: Save Docker image layer cache
           command: |
@@ -39,11 +45,11 @@ jobs:
       - run:
           name: Tests
           command: |
-            docker run pagespeedinsights-collector:${CIRCLE_SHA1} npm run test:code
+            docker run pagespeedinsights-collector:${IMAGE_VERSION} npm run test:code
       - run:
           name: Report npm deps
           command: |
-            docker run pagespeedinsights-collector:${CIRCLE_SHA1} npm outdated 2>&1 | tee /artifacts/npm-outdated.txt || true
+            docker run pagespeedinsights-collector:${IMAGE_VERSION} npm outdated 2>&1 | tee /artifacts/npm-outdated.txt || true
       - run:
           name: Install trivy
           command: |
@@ -59,30 +65,28 @@ jobs:
       - run:
           name: Scan the local image with trivy
           command: |
-            trivy --exit-code 0 --no-progress pagespeedinsights-collector:${CIRCLE_SHA1} | tee /artifacts/trivy-all.txt
-            trivy --exit-code 0 --no-progress --ignore-unfixed pagespeedinsights-collector:${CIRCLE_SHA1} | tee /artifacts/trivy-fixable.txt
+            trivy --exit-code 0 --no-progress pagespeedinsights-collector:${IMAGE_VERSION} | tee /artifacts/trivy-all.txt
+            trivy --exit-code 0 --no-progress --ignore-unfixed pagespeedinsights-collector:${IMAGE_VERSION} | tee /artifacts/trivy-fixable.txt
       - run:
           name: Push Docker image
           command: |
             if [ "${CIRCLE_BRANCH}" == "octopus" ]; then
-              VERSION=$(awk '/version/{gsub(/("|",)/,"",$2);print $2};' package.json)
-              docker tag pagespeedinsights-collector:${VERSION}-${CIRCLE_BUILD_NUM} ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_SPACE}/pagespeedinsights-collector:${VERSION}-${CIRCLE_BUILD_NUM}
+              docker tag pagespeedinsights-collector:${IMAGE_VERSION} ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_SPACE}/pagespeedinsights-collector:${IMAGE_VERSION}
               docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} ${DOCKER_REGISTRY}
-              docker push ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_SPACE}/pagespeedinsights-collector:${VERSION}-${CIRCLE_BUILD_NUM}
+              docker push ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_SPACE}/pagespeedinsights-collector:${IMAGE_VERSION}
             fi
       - run:
           name: Create release in Octopus
           command: |
             if [ "${CIRCLE_BRANCH}" == "octopus" ]; then
-              VERSION=$(awk '/version/{gsub(/("|",)/,"",$2);print $2};' package.json)
               docker run \
-                pagespeedinsights-collector:${VERSION}-${CIRCLE_BUILD_NUM} \
+                pagespeedinsights-collector:${IMAGE_VERSION} \
                 npx octopus-deploy release create \
                   --host ${OCTOPUS_SERVER_URL} \
                   --apiKey ${OCTOPUS_API_KEY} \
                   --projectSlugOrId pagespeedinsights-collector \
-                  --releaseVersion ${VERSION}-${CIRCLE_BUILD_NUM} \
-                  --packageVersion ${VERSION}-${CIRCLE_BUILD_NUM}
+                  --releaseVersion ${IMAGE_VERSION} \
+                  --packageVersion ${IMAGE_VERSION}
             fi
       - store_artifacts:
           path: /artifacts
