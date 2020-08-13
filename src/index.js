@@ -8,7 +8,11 @@ const dataextractor = require('./dataextractor');
 const apiKey = process.env.APIKey;
 const pages = process.env.PAGES.split(',').map((page) => page.trim());
 const PORT = 3000;
-const pollInterval = 1; //minutes
+var pollInterval = parseInt(process.env.POLL_INTERVAL_MINS,10); //minutes
+if (isNaN(pollInterval)) {
+	pollInterval = 1;
+}
+
 
 const metrics = {
 	first_contentful_paint: new Prometheus.Gauge({
