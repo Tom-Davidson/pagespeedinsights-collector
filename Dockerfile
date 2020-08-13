@@ -4,6 +4,7 @@ RUN chown -R node /home/node/app
 USER node
 COPY package.json /home/node/app
 COPY src /home/node/app/src
+COPY tests /home/node/app/tests
 WORKDIR /home/node/app
 RUN npm install
 CMD ["npm", "start"]
