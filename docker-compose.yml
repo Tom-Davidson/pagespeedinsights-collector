@@ -3,9 +3,9 @@ services:
   collector:
     container_name: 'pagespeedinsights-collector'
     image: node:12.13.1-alpine3.10
-    working_dir: /app
+    working_dir: /home/node/app
     volumes:
-     - .:/app
+     - .:/home/node/app
     environment:
       - APIKey
       - PAGES
