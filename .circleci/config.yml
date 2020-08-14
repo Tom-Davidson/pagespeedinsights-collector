@@ -58,28 +58,13 @@ jobs:
               VERSION=$(awk '/version/{gsub(/("|",)/,"",$2);print $2};' package.json)
               IMAGE_VERSION="${VERSION}-${CIRCLE_BUILD_NUM}"
               # GitHub Package Repo
-              echo ${DOCKER_PASSWORD2} | docker login ${DOCKER_REGISTRY} -u ${DOCKER_USERNAME} --password-stdin
+              echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REGISTRY} -u ${DOCKER_USERNAME} --password-stdin
               #docker tag pagespeedinsights-collector:${IMAGE_VERSION} ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_SPACE}/pagespeedinsights-collector:${IMAGE_VERSION}
               #docker push ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_SPACE}/pagespeedinsights-collector:${IMAGE_VERSION}
               # Docker Hub
               echo ${DOCKER_PASSWORD2} | docker login -u ${DOCKER_USERNAME2} --password-stdin
               docker tag pagespeedinsights-collector:${IMAGE_VERSION} ${DOCKER_REGISTRY_SPACE2}/pagespeedinsights-collector:${IMAGE_VERSION}
               docker push ${DOCKER_REGISTRY_SPACE2}/pagespeedinsights-collector:${IMAGE_VERSION}
-            fi
-      - run:
-          name: Create release in Octopus
-          command: |
-            if [ "${CIRCLE_BRANCH}" == "octopus" ]; then
-              VERSION=$(awk '/version/{gsub(/("|",)/,"",$2);print $2};' package.json)
-              IMAGE_VERSION="${VERSION}-${CIRCLE_BUILD_NUM}"
-              docker run \
-                pagespeedinsights-collector:${IMAGE_VERSION} \
-                npx octopus-deploy release create \
-                  --host ${OCTOPUS_SERVER_URL} \
-                  --apiKey ${OCTOPUS_API_KEY} \
-                  --projectSlugOrId pagespeedinsights-collector \
-                  --releaseVersion ${IMAGE_VERSION} \
-                  --packageVersion ${IMAGE_VERSION}
             fi
       - store_artifacts:
           path: /artifacts
