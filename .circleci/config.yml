@@ -59,8 +59,8 @@ jobs:
               IMAGE_VERSION="${VERSION}-${CIRCLE_BUILD_NUM}"
               # GitHub Package Repo
               echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REGISTRY} -u ${DOCKER_USERNAME} --password-stdin
-              #docker tag pagespeedinsights-collector:${IMAGE_VERSION} ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_SPACE}/pagespeedinsights-collector:${IMAGE_VERSION}
-              #docker push ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_SPACE}/pagespeedinsights-collector:${IMAGE_VERSION}
+              docker tag pagespeedinsights-collector:${IMAGE_VERSION} ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_SPACE}/pagespeedinsights-collector:${IMAGE_VERSION}
+              docker push ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_SPACE}/pagespeedinsights-collector:${IMAGE_VERSION}
               # Docker Hub
               echo ${DOCKER_PASSWORD2} | docker login -u ${DOCKER_USERNAME2} --password-stdin
               docker tag pagespeedinsights-collector:${IMAGE_VERSION} ${DOCKER_REGISTRY_SPACE2}/pagespeedinsights-collector:${IMAGE_VERSION}
