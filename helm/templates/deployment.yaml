@@ -18,7 +18,7 @@ spec:
       - name: githubdockerregistry
       containers:
       - name: pagespeedinsights-collector
-        image: docker.pkg.github.com/tom-davidson/pagespeedinsights-collector/pagespeedinsights-collector
+        image: tomdavidson42/pagespeedinsights-collector
         resources:
           requests:
             cpu: 10m
