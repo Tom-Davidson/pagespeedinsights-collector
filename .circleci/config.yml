@@ -54,7 +54,7 @@ jobs:
       - run:
           name: Push Docker image
           command: |
-            if [ "${CIRCLE_BRANCH}" == "dockerhub" ]; then
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
               VERSION=$(awk '/version/{gsub(/("|",)/,"",$2);print $2};' package.json)
               IMAGE_VERSION="${VERSION}-${CIRCLE_BUILD_NUM}"
               # GitHub Package Repo
