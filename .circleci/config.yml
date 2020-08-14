@@ -15,11 +15,6 @@ jobs:
             pip install docker-compose==1.22.0
             mkdir -p /artifacts
       - run:
-          name: Load Docker image layer cache
-          command: |
-            set +o pipefail
-            docker load -i /caches/docker.tar | true
-      - run:
           name: Build
           command: |
             VERSION=$(awk '/version/{gsub(/("|",)/,"",$2);print $2};' package.json)
