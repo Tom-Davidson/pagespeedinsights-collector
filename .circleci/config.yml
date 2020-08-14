@@ -1,4 +1,4 @@
-version: 2
+version: 2.1
 jobs:
   build:
     docker:
@@ -6,67 +6,65 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
+#     - setup_remote_docker:
+#         docker_layer_caching: true
       - run:
           name: Install dependencies
           command: |
             apk add --no-cache py-pip=10.0.1-r0
             pip install docker-compose==1.22.0
             mkdir -p /artifacts
-      - restore_cache:
-          keys:
-            - v1-{{ .Branch }}
-          paths:
-            - /caches/docker.tar
-      - run:
-          name: Load Docker image layer cache
-          command: |
-            set +o pipefail
-            docker load -i /caches/docker.tar | true
       - run:
           name: Build
           command: |
-            docker build --cache-from=docker -t pagespeedinsights-collector:${CIRCLE_SHA1} .
-      - run:
-          name: Save Docker image layer cache
-          command: |
-            mkdir -p /caches
-            docker save -o /caches/docker.tar pagespeedinsights-collector
-      - save_cache:
-          key: v1-{{ .Branch }}-{{ epoch }}
-          paths:
-            - /caches/docker.tar
+            VERSION=$(awk '/version/{gsub(/("|",)/,"",$2);print $2};' package.json)
+            IMAGE_VERSION="${VERSION}-${CIRCLE_BUILD_NUM}"
+            docker build --cache-from=docker -t pagespeedinsights-collector:${IMAGE_VERSION} .
       - run:
           name: Tests
           command: |
-            docker run pagespeedinsights-collector:${CIRCLE_SHA1} npm run test:code
+            VERSION=$(awk '/version/{gsub(/("|",)/,"",$2);print $2};' package.json)
+            IMAGE_VERSION="${VERSION}-${CIRCLE_BUILD_NUM}"
+            docker run pagespeedinsights-collector:${IMAGE_VERSION} npm run test:code
       - run:
           name: Report npm deps
           command: |
-            docker run pagespeedinsights-collector:${CIRCLE_SHA1} npm outdated 2>&1 | tee /artifacts/npm-outdated.txt || true
+            VERSION=$(awk '/version/{gsub(/("|",)/,"",$2);print $2};' package.json)
+            IMAGE_VERSION="${VERSION}-${CIRCLE_BUILD_NUM}"
+            docker run pagespeedinsights-collector:${IMAGE_VERSION} npm outdated 2>&1 | tee /artifacts/npm-outdated.txt || true
       - run:
           name: Install trivy
           command: |
             apk add --update curl
-            VERSION=$(
+            TRIVY_VERSION=$(
                 curl --silent "https://api.github.com/repos/aquasecurity/trivy/releases/latest" | \
                 grep '"tag_name":' | \
                 sed -E 's/.*"v([^"]+)".*/\1/'
             )
-            wget https://github.com/aquasecurity/trivy/releases/download/v${VERSION}/trivy_${VERSION}_Linux-64bit.tar.gz
-            tar zxvf trivy_${VERSION}_Linux-64bit.tar.gz trivy
+            wget https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz
+            tar zxvf trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz trivy
             mv trivy /usr/local/bin
       - run:
           name: Scan the local image with trivy
           command: |
-            trivy --exit-code 0 --no-progress pagespeedinsights-collector:${CIRCLE_SHA1} | tee /artifacts/trivy-all.txt
-            trivy --exit-code 0 --no-progress --ignore-unfixed pagespeedinsights-collector:${CIRCLE_SHA1} | tee /artifacts/trivy-fixable.txt
-      - deploy:
+            VERSION=$(awk '/version/{gsub(/("|",)/,"",$2);print $2};' package.json)
+            IMAGE_VERSION="${VERSION}-${CIRCLE_BUILD_NUM}"
+            trivy --exit-code 0 --no-progress pagespeedinsights-collector:${IMAGE_VERSION} | tee /artifacts/trivy-all.txt
+            trivy --exit-code 0 --no-progress --ignore-unfixed pagespeedinsights-collector:${IMAGE_VERSION} | tee /artifacts/trivy-fixable.txt
+      - run:
           name: Push Docker image
           command: |
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              docker tag pagespeedinsights-collector:${CIRCLE_SHA1} ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_SPACE}/pagespeedinsights-collector:${CIRCLE_SHA1}
-              docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} ${DOCKER_REGISTRY}
-              docker push ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_SPACE}/pagespeedinsights-collector:${CIRCLE_SHA1}
+            if [ "${CIRCLE_BRANCH}" == "dockerhub" ]; then
+              VERSION=$(awk '/version/{gsub(/("|",)/,"",$2);print $2};' package.json)
+              IMAGE_VERSION="${VERSION}-${CIRCLE_BUILD_NUM}"
+              # GitHub Package Repo
+              echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REGISTRY} -u ${DOCKER_USERNAME} --password-stdin
+              #docker tag pagespeedinsights-collector:${IMAGE_VERSION} ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_SPACE}/pagespeedinsights-collector:${IMAGE_VERSION}
+              #docker push ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_SPACE}/pagespeedinsights-collector:${IMAGE_VERSION}
+              # Docker Hub
+              echo ${DOCKER_PASSWORD2} | docker login -u ${DOCKER_USERNAME2} --password-stdin
+              docker tag pagespeedinsights-collector:${IMAGE_VERSION} ${DOCKER_REGISTRY_SPACE2}/pagespeedinsights-collector:${IMAGE_VERSION}
+              docker push ${DOCKER_REGISTRY_SPACE2}/pagespeedinsights-collector:${IMAGE_VERSION}
             fi
       - store_artifacts:
           path: /artifacts
