@@ -31,13 +31,24 @@ const first_meaningful_paint = (data) => {
 	return collect_numeric_from_audits(data, 'first-meaningful-paint');
 };
 const performance_score = (data) => {
-	if (data && 
-		data.lighthouseResult && 
-		data.lighthouseResult.categories && 
+	if (data &&
+		data.lighthouseResult &&
+		data.lighthouseResult.categories &&
 		data.lighthouseResult.categories.performance &&
 		data.lighthouseResult.categories.performance.score
 	) {
 		return data.lighthouseResult.categories.performance.score;
+	}
+	return undefined;
+};
+const accessibility_score = (data) => {
+	if (data &&
+		data.lighthouseResult &&
+		data.lighthouseResult.categories &&
+		data.lighthouseResult.categories.accessibility &&
+		data.lighthouseResult.categories.accessibility.score
+	) {
+		return data.lighthouseResult.categories.accessibility.score;
 	}
 	return undefined;
 };
@@ -49,5 +60,6 @@ module.exports = {
 	speed_index,
 	max_potential_fid,
 	first_meaningful_paint,
-	performance_score
+	performance_score,
+	accessibility_score
 };

@@ -33,3 +33,7 @@ test('dataextractor.performance_score', () => {
 	const ps = dataextractor.performance_score(data);
 	expect(ps).toBe(0.87);
 });
+test('dataextractor.accessibility_score', () => {
+	const ps = dataextractor.accessibility_score(data);
+	expect(ps).toBe(0.96);
+});
