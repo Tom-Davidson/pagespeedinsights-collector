@@ -51,7 +51,7 @@ const metrics = {
 		labelNames: [ 'page' ]
 	}),
 	accessibility_score: new Prometheus.Gauge({
-		name: 'accessibility_performance_score',
+		name: 'pagespeed_accessibility_performance_score',
 		help: "Accessibility Score",
 		labelNames: [ 'page' ]
 	})
