@@ -49,6 +49,11 @@ const metrics = {
 		name: 'pagespeed_performance_score',
 		help: "Performance Score",
 		labelNames: [ 'page' ]
+	}),
+	accessibility_score: new Prometheus.Gauge({
+		name: 'pagespeed_accessibility_score',
+		help: "Accessibility Score",
+		labelNames: [ 'page' ]
 	})
 };
 
@@ -64,6 +69,7 @@ for (let page of pages) {
 				metrics.max_potential_fid.set({ page }, dataextractor.max_potential_fid(data));
 				metrics.first_meaningful_paint.set({ page }, dataextractor.first_meaningful_paint(data));
 				metrics.performance_score.set({ page }, dataextractor.performance_score(data));
+				metrics.accessibility_score.set({ page }, dataextractor.accessibility_score(data));
 			} catch (e) {
 				console.error(`data parsing failed, response dumped, url called: ${page}`);
 				fs.writeFileSync('response.json', data, { mode: 0o755 });
