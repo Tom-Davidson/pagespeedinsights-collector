@@ -116,7 +116,7 @@ for (let page of pages) {
 				metrics.performance_score.set({ page }, dataextractor.performance_score(desktopData));
 				metrics.accessibility_score.set({ page }, dataextractor.accessibility_score(desktopData));
 			} catch (e) {
-				console.error(`data parsing failed, response dumped, url called: ${page}`);
+				console.error(`data parsing failed, response dumped, url called: ${page}. Error: ${e.message}`);
 				fs.writeFileSync('response.json', desktopData, { mode: 0o755 });
 			}
 		}
