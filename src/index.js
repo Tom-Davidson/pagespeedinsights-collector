@@ -97,9 +97,14 @@ const metrics = {
 	})
 };
 
+const viewports = {
+	DESKTOP: 'DESKTOP',
+	MOBILE: 'MOBILE'
+}
+
 for (let page of pages) {
 	setInterval(async () => {
-		let desktopData = await pagespeed(page, apiKey, 'DESKTOP');
+		let desktopData = await pagespeed(page, apiKey, viewports.DESKTOP);
 		if (desktopData != null) {
 			try {
 				metrics.first_contentful_paint.set({ page }, dataextractor.first_contentful_paint(desktopData));
@@ -115,7 +120,7 @@ for (let page of pages) {
 				fs.writeFileSync('response.json', desktopData, { mode: 0o755 });
 			}
 		}
-		let mobileData = await pagespeed(page, apiKey, 'MOBILE');
+		let mobileData = await pagespeed(page, apiKey, viewports.MOBILE);
 		if (mobileData != null) {
 			try {
 				metrics.mobile_first_contentful_paint.set({ page }, dataextractor.first_contentful_paint(mobileData));
