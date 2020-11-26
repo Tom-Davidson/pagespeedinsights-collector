@@ -1,12 +1,12 @@
 const axios = require('axios');
 
-const viewports = {
+const strategies = {
 	DESKTOP: 'DESKTOP',
 	MOBILE: 'MOBILE'
 };
 
-const getPagespeedInsights = async (page, apiKey, viewport) => {
-	let url = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${page}&key=${apiKey}&category=PERFORMANCE&category=ACCESSIBILITY&strategy=${viewport}`;
+const getPagespeedInsights = async (page, apiKey, strategy) => {
+	let url = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${page}&key=${apiKey}&category=PERFORMANCE&category=ACCESSIBILITY&strategy=${strategy}`;
 	try {
 		const response = await axios.get(url);
 		return response.data;
@@ -17,6 +17,6 @@ const getPagespeedInsights = async (page, apiKey, viewport) => {
 };
 
 module.exports = {
-	viewports,
+	strategies,
 	getPagespeedInsights
 }

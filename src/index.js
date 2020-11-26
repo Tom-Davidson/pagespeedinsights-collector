@@ -2,7 +2,7 @@ const fs = require('fs');
 const express = require('express');
 const Prometheus = require('prom-client');
 const promMid = require('express-prometheus-middleware');
-const { viewports, getPagespeedInsights } = require('./pagespeed');
+const { strategies, getPagespeedInsights } = require('./pagespeed');
 const dataextractor = require('./dataextractor');
 
 const apiKey = process.env.APIKey;
@@ -101,25 +101,25 @@ const metrics = {
 	}
 };
 
-const pagespeedDataSets = {
-	desktop: viewports.DESKTOP,
-	mobile: viewports.MOBILE
+const pagespeedStrategies = {
+	desktop: strategies.DESKTOP,
+	mobile: strategies.MOBILE
 };
 
 for (let page of pages) {
-	for (const pagespeedDataSet in pagespeedDataSets) {
+	for (const strategy in pagespeedStrategies) {
 		setInterval(async () => {
-			let data = await getPagespeedInsights(page, apiKey, pagespeedDataSets[pagespeedDataSet]);
+			let data = await getPagespeedInsights(page, apiKey, pagespeedStrategies[strategy]);
 			if (data) {
 				try {
-					metrics[pagespeedDataSet].first_contentful_paint.set({page}, dataextractor.first_contentful_paint(data));
-					metrics[pagespeedDataSet].first_cpu_idle.set({page}, dataextractor.first_cpu_idle(data));
-					metrics[pagespeedDataSet].interactive.set({page}, dataextractor.interactive(data));
-					metrics[pagespeedDataSet].speed_index.set({page}, dataextractor.speed_index(data));
-					metrics[pagespeedDataSet].max_potential_fid.set({page}, dataextractor.max_potential_fid(data));
-					metrics[pagespeedDataSet].first_meaningful_paint.set({page}, dataextractor.first_meaningful_paint(data));
-					metrics[pagespeedDataSet].performance_score.set({page}, dataextractor.performance_score(data));
-					metrics[pagespeedDataSet].accessibility_score.set({page}, dataextractor.accessibility_score(data));
+					metrics[strategy].first_contentful_paint.set({page}, dataextractor.first_contentful_paint(data));
+					metrics[strategy].first_cpu_idle.set({page}, dataextractor.first_cpu_idle(data));
+					metrics[strategy].interactive.set({page}, dataextractor.interactive(data));
+					metrics[strategy].speed_index.set({page}, dataextractor.speed_index(data));
+					metrics[strategy].max_potential_fid.set({page}, dataextractor.max_potential_fid(data));
+					metrics[strategy].first_meaningful_paint.set({page}, dataextractor.first_meaningful_paint(data));
+					metrics[strategy].performance_score.set({page}, dataextractor.performance_score(data));
+					metrics[strategy].accessibility_score.set({page}, dataextractor.accessibility_score(data));
 				} catch (e) {
 					console.error(`data parsing failed, response dumped, url called: ${page}. Error: ${e.message}`);
 					fs.writeFileSync('response.json', data, {mode: 0o755});
