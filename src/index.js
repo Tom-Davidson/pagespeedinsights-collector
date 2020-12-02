@@ -2,13 +2,13 @@ const fs = require('fs');
 const express = require('express');
 const Prometheus = require('prom-client');
 const promMid = require('express-prometheus-middleware');
-const pagespeed = require('./pagespeed');
+const { getPagespeedInsights, strategies } = require('./pagespeed');
 const dataextractor = require('./dataextractor');
 
 const apiKey = process.env.APIKey;
 const pages = process.env.PAGES.split(',').map((page) => page.trim());
 const PORT = 3000;
-var pollInterval = parseInt(process.env.POLL_INTERVAL_MINS,10); //minutes
+let pollInterval = parseInt(process.env.POLL_INTERVAL_MINS, 10); //minutes
 if (isNaN(pollInterval)) {
 	pollInterval = 1;
 }
@@ -59,26 +59,33 @@ viewports.forEach(viewport => {
 		}),
 	}
 
+	const pagespeedStrategies = {
+		desktop: strategies.DESKTOP,
+		mobile: strategies.MOBILE
+	};
+
 	for (let page of pages) {
-		setInterval(async () => {
-			let data = await pagespeed(page, apiKey, viewport);
-			if (data != null) {
-				try {
-					metrics[`first_contentful_paint_${viewport}`].set({ page }, dataextractor.first_contentful_paint(data));
-					metrics[`first_cpu_idle_${viewport}`].set({ page }, dataextractor.first_cpu_idle(data));
-					metrics[`interactive_${viewport}`].set({ page }, dataextractor.interactive(data));
-					metrics[`speed_index_${viewport}`].set({ page }, dataextractor.speed_index(data));
-					metrics[`max_potential_fid_${viewport}`].set({ page }, dataextractor.max_potential_fid(data));
-					metrics[`first_meaningful_paint_${viewport}`].set({ page }, dataextractor.first_meaningful_paint(data));
-					metrics[`performance_score_${viewport}`].set({ page }, dataextractor.performance_score(data));
-					metrics[`accessibility_score_${viewport}`].set({ page }, dataextractor.accessibility_score(data));
-				} catch (e) {
-					console.log(e);
-					console.error(`data parsing failed, response dumped, url called: ${page}`);
-					fs.writeFileSync('response.json', data, { mode: 0o755 });
+		for (const strategy in pagespeedStrategies) {
+			setInterval(async () => {
+				let data = await getPagespeedInsights(page, apiKey, strategy);
+				if (data != null) {
+					try {
+						metrics[`first_contentful_paint_${viewport}`].set({page}, dataextractor.first_contentful_paint(data));
+						metrics[`first_cpu_idle_${viewport}`].set({page}, dataextractor.first_cpu_idle(data));
+						metrics[`interactive_${viewport}`].set({page}, dataextractor.interactive(data));
+						metrics[`speed_index_${viewport}`].set({page}, dataextractor.speed_index(data));
+						metrics[`max_potential_fid_${viewport}`].set({page}, dataextractor.max_potential_fid(data));
+						metrics[`first_meaningful_paint_${viewport}`].set({page}, dataextractor.first_meaningful_paint(data));
+						metrics[`performance_score_${viewport}`].set({page}, dataextractor.performance_score(data));
+						metrics[`accessibility_score_${viewport}`].set({page}, dataextractor.accessibility_score(data));
+					} catch (e) {
+						console.log(e);
+						console.error(`data parsing failed, response dumped, url called: ${page}`);
+						fs.writeFileSync('response.json', data, {mode: 0o755});
+					}
 				}
-			}
-		}, pollInterval * 60 * 1000);
+			}, pollInterval * 60 * 1000);
+		}
 	}
 });
 
