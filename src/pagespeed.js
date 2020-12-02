@@ -1,13 +1,26 @@
 const axios = require('axios');
 
-module.exports = async function(page, apiKey) {
-	let url = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${page}&key=${apiKey}&category=PERFORMANCE&category=ACCESSIBILITY`;
-	try {
-		const response = await axios.get(url);
-		const data = response.data;
-		return data;
-	} catch (error) {
-		console.error(`Error fetching ${page} - ${error}`)
-		return null;
+const strategies = {
+	DESKTOP: 'DESKTOP',
+	MOBILE: 'MOBILE'
+};
+
+const getPagespeedInsights = async (page, apiKey, strategy) => {
+	if (strategy in strategies) {
+		let url = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${page}&key=${apiKey}&category=PERFORMANCE&category=ACCESSIBILITY&strategy=${strategy}`;
+		try {
+			const response = await axios.get(url);
+			return response.data;
+		} catch (error) {
+			console.error(`Error fetching ${page} - ${error}`)
+			return null;
+		}
+	} else {
+		throw `${strategy} is not a valid strategy!`;
 	}
 };
+
+module.exports = {
+	strategies,
+	getPagespeedInsights
+}
