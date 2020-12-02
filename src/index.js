@@ -11,7 +11,7 @@ const PORT = 3000;
 
 let pollInterval = parseInt(process.env.POLL_INTERVAL_MINS, 10); //minutes
 if (isNaN(pollInterval)) {
-	pollInterval = 0.25;
+	pollInterval = 1;
 }
 
 const pagespeedStrategies = {
