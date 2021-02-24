@@ -25,6 +25,7 @@ Collect Google's PageSpeed Insights and graph over time.
     - [pagespeedinsights-collector](http://localhost:3000/metrics)
     - [prometheus](http://localhost:9090/)
   - if you make changes to `package.json` or `package-lock.json` please `rm -Rf ./node_modules/` in order for it to be re-installed from within the container
+  - To check for smells using a local installation of sonarcube `docker run -d --name sonarqube -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true -p 9000:9000 sonarqube:8.6.1-community` to start the local server, set your env vars with `SONAR_HOST_URL=http://localhost:9000 SONAR_LOGIN="YOUR_TOKEN_HERE" npm run test:sonar`. If you want to stop the local instance of sonarqube run `docker stop sonarqube`
 
 ## Debugging
 
