@@ -87,6 +87,7 @@ for (const strategy in pagespeedStrategies) {
 }
 
 const app = express();
+app.disable("x-powered-by");
 app.use(
 	// Prometheus endpoint
 	promMid({
