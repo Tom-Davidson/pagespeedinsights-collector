@@ -27,6 +27,11 @@ Collect Google's PageSpeed Insights and graph over time.
   - if you make changes to `package.json` or `package-lock.json` please `rm -Rf ./node_modules/` in order for it to be re-installed from within the container
   - To check for smells using a local installation of sonarcube `docker run -d --name sonarqube -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true -p 9000:9000 sonarqube:8.6.1-community` to start the local server, set your env vars with `SONAR_HOST_URL=http://localhost:9000 SONAR_LOGIN="YOUR_TOKEN_HERE" npm run test:sonar`. If you want to stop the local instance of sonarqube run `docker stop sonarqube`
 
+## Running Tests
+
+- `npm test` js unit tests and Dockerfile linting
+- `npm run test:dockerfile:security` runs security best practice static analysis on the Dockerfile (not on CI currently)
+
 ## Debugging
 
 - Direct access to the K8s service: `kubectl port-forward deployment/pagespeedinsights-collector 3000:3000`
