@@ -9,3 +9,4 @@ coverage/
 isolate*.log
 debug-perf.txt
 dockerfile-security.rego
+.scannerwork/
