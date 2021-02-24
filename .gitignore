@@ -8,3 +8,4 @@ node_modules/
 coverage/
 isolate*.log
 debug-perf.txt
+dockerfile-security.rego

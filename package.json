@@ -17,7 +17,9 @@
     "install": "[[ -d node_modules ]] || npm install",
     "test": "npm run test:code && npm run test:dockerfile",
     "test:code": "jest --coverage",
-    "test:dockerfile": "docker run --rm -i hadolint/hadolint < ./Dockerfile",
+    "test:dockerfile": "npm run test:dockerfile:lint",
+    "test:dockerfile:lint": "docker run --rm -i hadolint/hadolint < ./Dockerfile",
+    "test:dockerfile:security": "wget -O dockerfile-security.rego https://raw.githubusercontent.com/gbrindisi/dockerfile-security/main/dockerfile-security.rego && docker run --rm -v $(pwd):/project openpolicyagent/conftest test --policy dockerfile-security.rego Dockerfile",
     "start": "NODE_ENV=production node src/index.js",
     "dev": "npm run install && nodemon src/index.js",
     "dev:local": "nodemon -r dotenv/config src/index.js",
@@ -26,11 +28,11 @@
   },
   "devDependencies": {
     "dotenv": "8.2.0",
-    "jest": "26.1.0",
-    "nodemon": "2.0.4"
+    "jest": "26.6.0",
+    "nodemon": "2.0.6"
   },
   "dependencies": {
-    "axios": "0.19.2",
+    "axios": "0.20.0",
     "express": "4.17.1",
     "express-prometheus-middleware": "0.9.6",
     "prom-client": "12.0.0"

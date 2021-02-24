@@ -26,6 +26,11 @@ Collect Google's PageSpeed Insights and graph over time.
     - [prometheus](http://localhost:9090/)
   - if you make changes to `package.json` or `package-lock.json` please `rm -Rf ./node_modules/` in order for it to be re-installed from within the container
 
+## Running Tests
+
+- `npm test` js unit tests and Dockerfile linting
+- `npm run test:dockerfile:security` runs security best practice static analysis on the Dockerfile (not on CI currently)
+
 ## Debugging
 
 - Direct access to the K8s service: `kubectl port-forward deployment/pagespeedinsights-collector 3000:3000`
