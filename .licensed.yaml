@@ -1,0 +1,26 @@
+name: pagespeedinsights-collector
+source_path: ./
+sources:
+  npm: true
+cache_path: ./licensed-cache
+allowed:
+  - mit
+  - isc
+  - apache-2.0
+  - bsd-2-clause
+  - bsd-3-clause
+  - unlicense
+ignored:
+  npm:
+    # not detected
+    - abbrev      # isc
+    - fs.realpath # isc
+    - minizlib    # mit
+    - nan         # mit
+    - qs          # bsd-3-clause
+    - rc          # mit / bsd-2-clause / apache-2.0
+    - readable-stream # mit
+    - sax         # isc
+    - string_decoder # mit
+    # invidually assessed
+    - url-value-parser # WTFPL: https://github.com/disjunction/url-value-parser/blob/master/LICENSE = https://en.wikipedia.org/wiki/WTFPL
