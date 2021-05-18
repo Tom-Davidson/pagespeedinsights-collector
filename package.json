@@ -29,14 +29,14 @@
     "perf:report": "node --prof-process `ls -t isolate*.log | head -1` > debug-perf.txt"
   },
   "devDependencies": {
-    "dotenv": "8.2.0",
+    "dotenv": "9.0.2",
     "jest": "26.6.3",
     "nodemon": "2.0.7"
   },
   "dependencies": {
     "axios": "0.21.1",
     "express": "4.17.1",
-    "express-prometheus-middleware": "1.1.0",
+    "express-prometheus-middleware": "1.2.0",
     "prom-client": "13.1.0"
   }
 }
