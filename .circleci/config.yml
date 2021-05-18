@@ -80,6 +80,7 @@ jobs:
           name: licensed (https://github.com/github/licensed)
           command: |
             DEBIAN_FRONTEND="noninteractive" TZ="Europe/London" apt install -y cmake pkg-config curl npm
+            npm install
             curl -sSL https://github.com/github/licensed/releases/download/3.0.1/licensed-3.0.1-linux-x64.tar.gz > licensed.tar.gz
             tar -xzf licensed.tar.gz
             rm -f licensed.tar.gz
