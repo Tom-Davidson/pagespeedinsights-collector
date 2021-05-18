@@ -2,7 +2,7 @@ name: pagespeedinsights-collector
 source_path: ./
 sources:
   npm: true
-cache_path: ./licenced-cache
+cache_path: ./licensed-cache
 allowed:
   - mit
   - isc
