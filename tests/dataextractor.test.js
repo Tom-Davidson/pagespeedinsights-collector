@@ -9,10 +9,6 @@ test('dataextractor.first_contentful_paint with bad data', () => {
 	const fcp = dataextractor.first_contentful_paint(undefined);
 	expect(fcp).toBe(undefined);
 });
-test('dataextractor.first_cpu_idle', () => {
-	const fci = dataextractor.first_cpu_idle(data);
-	expect(fci).toBe(2979);
-});
 test('dataextractor.interactive', () => {
 	const tti = dataextractor.interactive(data);
 	expect(tti).toBe(3137.5);
