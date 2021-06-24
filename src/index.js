@@ -26,11 +26,6 @@ for (const strategy in pagespeedStrategies) {
 			help: 'Time to first contentful paint, more info here: https://web.dev/first-contentful-paint/',
 			labelNames: ['page']
 		}),
-		[`first_cpu_idle_${strategy}`]: new Prometheus.Gauge({
-			name: `pagespeed_first_cpu_idle_milliseconds_${strategy}`,
-			help: `First CPU Idle marks the first time at which the page's main thread is quiet enough to handle input.  https://web.dev/first-cpu-idle.`,
-			labelNames: ['page']
-		}),
 		[`interactive_${strategy}`]: new Prometheus.Gauge({
 			name: `pagespeed_interactive_milliseconds_${strategy}`,
 			help: `Time to interactive is the amount of time it takes for the page to become fully interactive. https://web.dev/interactive.`,
@@ -69,7 +64,6 @@ for (const strategy in pagespeedStrategies) {
 			if (data != null) {
 				try {
 					metrics[`first_contentful_paint_${strategy}`].set({page}, dataextractor.first_contentful_paint(data));
-					metrics[`first_cpu_idle_${strategy}`].set({page}, dataextractor.first_cpu_idle(data));
 					metrics[`interactive_${strategy}`].set({page}, dataextractor.interactive(data));
 					metrics[`speed_index_${strategy}`].set({page}, dataextractor.speed_index(data));
 					metrics[`max_potential_fid_${strategy}`].set({page}, dataextractor.max_potential_fid(data));
