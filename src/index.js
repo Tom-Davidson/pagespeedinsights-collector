@@ -19,57 +19,73 @@ const pagespeedStrategies = {
 	mobile: strategies.MOBILE
 };
 
-for (const strategy in pagespeedStrategies) {
-	const metrics = {
-		[`first_contentful_paint_${strategy}`]: new Prometheus.Gauge({
-			name: `pagespeed_first_contentful_paint_milliseconds_${strategy}`,
-			help: 'Time to first contentful paint, more info here: https://web.dev/first-contentful-paint/',
-			labelNames: ['page']
-		}),
-		[`interactive_${strategy}`]: new Prometheus.Gauge({
-			name: `pagespeed_interactive_milliseconds_${strategy}`,
-			help: `Time to interactive is the amount of time it takes for the page to become fully interactive. https://web.dev/interactive.`,
-			labelNames: ['page']
-		}),
-		[`speed_index_${strategy}`]: new Prometheus.Gauge({
-			name: `pagespeed_speed_index_seconds_${strategy}`,
-			help: `Speed Index, more info here: https://web.dev/speed-index`,
-			labelNames: ['page']
-		}),
-		[`max_potential_fid_${strategy}`]: new Prometheus.Gauge({
-			name: `pagespeed_max_potential_fid_seconds_${strategy}`,
-			help: `The maximum potential First Input Delay that your users could experience is the duration, in milliseconds, of the longest task. https://developers.google.com/web/updates/2018/05/first-input-delay`,
-			labelNames: ['page']
-		}),
-		[`first_meaningful_paint_${strategy}`]: new Prometheus.Gauge({
-			name: `pagespeed_first_meaningful_paint_seconds_${strategy}`,
-			help: `First Meaningful Paint measures when the primary content of a page is visible. https://web.dev/first-meaningful-paint`,
-			labelNames: ['page']
-		}),
-		[`performance_score_${strategy}`]: new Prometheus.Gauge({
-			name: `pagespeed_performance_score_${strategy}`,
-			help: `Performance Score`,
-			labelNames: ['page']
-		}),
-		[`accessibility_score_${strategy}`]: new Prometheus.Gauge({
-			name: `pagespeed_accessibility_score_${strategy}`,
-			help: `Accessibility Score`,
-			labelNames: ['page']
-		}),
-	}
+const metrics = {}
 
+function define_metric(key,name,help) {
+	metrics[key] = new Prometheus.Gauge({
+		name: name,
+		help: help,
+		labelNames: ['page','strategy']
+	});
+	metrics[`${key}_desktop`] = new Prometheus.Gauge({
+		name: `${name}_desktop`,
+		help: help,
+		labelNames: ['page']
+	});
+	metrics[`${key}_mobile`] = new Prometheus.Gauge({
+		name: `${name}_mobile`,
+		help: help,
+		labelNames: ['page']
+	});
+}
+
+function add_metric(name, page, strategy, metric)
+{
+	metrics[name].set( {page, strategy}, metric);
+	metrics[`${name}_${strategy}`].set( {page}, metric );
+}
+
+define_metric(`first_contentful_paint`,
+			`pagespeed_first_contentful_paint_milliseconds`,
+			'Time to first contentful paint, more info here: https://web.dev/first-contentful-paint/');
+
+define_metric('interactive',
+			'pagespeed_interactive_milliseconds',
+			`Time to interactive is the amount of time it takes for the page to become fully interactive. https://web.dev/interactive.`);
+
+define_metric('speed_index',
+			'pagespeed_speed_index_seconds',
+			`Speed Index, more info here: https://web.dev/speed-index`);
+
+define_metric('max_potential_fid',
+			'pagespeed_max_potential_fid_seconds',
+			`The maximum potential First Input Delay that your users could experience is the duration, in milliseconds, of the longest task. https://developers.google.com/web/updates/2018/05/first-input-delay`);
+
+define_metric('first_meaningful_paint',
+			'pagespeed_first_meaningful_paint_seconds',
+			`First Meaningful Paint measures when the primary content of a page is visible. https://web.dev/first-meaningful-paint`);
+
+define_metric('performance_score',
+			'pagespeed_performance_score',
+			`Performance Score`);
+
+define_metric('accessibility_score',
+			'pagespeed_accessibility_score',
+			`Accessibility Score`);
+
+for (const strategy in pagespeedStrategies) {
 	for (const page of pages) {
 		setInterval(async () => {
 			let data = await getPagespeedInsights(page, apiKey, pagespeedStrategies[strategy]);
-			if (data != null) {
+			if (data != null) {														
 				try {
-					metrics[`first_contentful_paint_${strategy}`].set({page}, dataextractor.first_contentful_paint(data));
-					metrics[`interactive_${strategy}`].set({page}, dataextractor.interactive(data));
-					metrics[`speed_index_${strategy}`].set({page}, dataextractor.speed_index(data));
-					metrics[`max_potential_fid_${strategy}`].set({page}, dataextractor.max_potential_fid(data));
-					metrics[`first_meaningful_paint_${strategy}`].set({page}, dataextractor.first_meaningful_paint(data));
-					metrics[`performance_score_${strategy}`].set({page}, dataextractor.performance_score(data));
-					metrics[`accessibility_score_${strategy}`].set({page}, dataextractor.accessibility_score(data));
+					add_metric('first_contentful_paint', page, strategy, dataextractor.first_contentful_paint(data));
+					add_metric('interactive', page, strategy, dataextractor.interactive(data));
+					add_metric('speed_index', page, strategy, dataextractor.speed_index(data));
+					add_metric('max_potential_fid', page, strategy, dataextractor.max_potential_fid(data));
+					add_metric('first_meaningful_paint', page, strategy, dataextractor.first_meaningful_paint(data));
+					add_metric('performance_score', page, strategy, dataextractor.performance_score(data));
+					add_metric('accessibility_score', page, strategy, dataextractor.accessibility_score(data));
 				} catch (e) {
 					console.log(e);
 					console.error(`data parsing failed, response dumped, url called: ${page}`);
