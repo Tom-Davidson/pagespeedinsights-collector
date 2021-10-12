@@ -1,4 +1,4 @@
-FROM node:12.22.6-alpine3.13
+FROM node:16.11.0-alpine3.13
 RUN mkdir /home/node/app
 RUN chown -R node /home/node/app
 USER node
