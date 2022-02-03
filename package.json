@@ -29,7 +29,7 @@
     "perf:report": "node --prof-process `ls -t isolate*.log | head -1` > debug-perf.txt"
   },
   "devDependencies": {
-    "dotenv": "15.0.0",
+    "dotenv": "16.0.0",
     "jest": "27.4.7",
     "nodemon": "2.0.15"
   },
