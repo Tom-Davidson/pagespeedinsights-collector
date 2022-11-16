@@ -1,4 +1,4 @@
-FROM node:12.22.6-alpine3.13
+FROM node:17.3.0-alpine3.13
 RUN mkdir /home/node/app && chown -R node /home/node/app
 USER node
 COPY . /home/node/app
