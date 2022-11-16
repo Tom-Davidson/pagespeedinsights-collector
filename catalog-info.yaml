@@ -1,0 +1,21 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: pagespeedinsights-collector
+  description: Collect Google's PageSpeed Insights and graph over time.
+  annotations:
+    github.com/project-slug: Tom-Davidson/pagespeedinsights-collector
+    circleci.com/project-slug: github/Tom-Davidson/pagespeedinsights-collector
+  tags:
+    - nodejs
+  links:
+    - url: https://github.com/Tom-Davidson/pagespeedinsights-collector
+      title: Repo
+      icon: GitHub
+      type: source
+spec:
+  type: tool
+  lifecycle: production
+  owner: Tom Davidson
+  system: monitoring
+  dependsOn: prometheus
