@@ -19,4 +19,4 @@ spec:
   owner: Tom Davidson
   system: monitoring
   dependsOn:
-    - prometheus
+    - resource:default/prometheus
