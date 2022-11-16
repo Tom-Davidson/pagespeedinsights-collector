@@ -18,4 +18,5 @@ spec:
   lifecycle: production
   owner: Tom Davidson
   system: monitoring
-  dependsOn: prometheus
+  dependsOn:
+    - prometheus
