@@ -1,6 +1,16 @@
+# Docs & External config
+.circleci/
+.github/
 .git
-.gitignore
-.circleci
-Dockerfile
-
+docker-compose/
+helm/
 env.*
+.gitignore
+.licensed.yaml
+catalog-info.yaml
+CODE_OF_CONDUCT.md
+Dockerfile
+README.md
+
+# Generated files
+coverage/
