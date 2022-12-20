@@ -1,6 +1,6 @@
 {
   "name": "pagespeedinsights-collector",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Collect Google's PageSpeed Insights and graph over time.",
   "author": "Tom Davidson",
   "license": "MIT",
