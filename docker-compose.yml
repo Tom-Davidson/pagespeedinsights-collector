@@ -1,16 +1,16 @@
-version: '3'
+version: "3"
 services:
   collector:
-    container_name: 'pagespeedinsights-collector'
-    image: node:12.13.1-alpine3.10
+    container_name: "pagespeedinsights-collector"
+    image: node:18.12.1-alpine3.17
     working_dir: /home/node/app
     volumes:
-     - .:/home/node/app
+      - .:/home/node/app
     environment:
       - APIKey
       - PAGES
     ports:
-     - "3000:3000"
+      - "3000:3000"
     command: ["npm", "run", "dev"]
   prometheus:
     image: prom/prometheus

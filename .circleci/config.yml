@@ -6,8 +6,8 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-#     - setup_remote_docker:
-#         docker_layer_caching: true
+      #     - setup_remote_docker:
+      #         docker_layer_caching: true
       - run:
           name: Install dependencies
           command: |
@@ -51,6 +51,10 @@ jobs:
             IMAGE_VERSION="${VERSION}-${CIRCLE_BUILD_NUM}"
             trivy image --exit-code 0 --no-progress pagespeedinsights-collector:${IMAGE_VERSION} | tee /artifacts/trivy-all.txt
             trivy image --exit-code 0 --no-progress --ignore-unfixed pagespeedinsights-collector:${IMAGE_VERSION} | tee /artifacts/trivy-fixable.txt
+      - run:
+          name: Scan repo for secrets
+          command: |
+            trivy fs . | tee /artifacts/trivy-secrets.txt
       - run:
           name: Push Docker image
           command: |
