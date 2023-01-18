@@ -30,6 +30,8 @@ Collect Google's PageSpeed Insights and graph over time.
 
 ## Running Tests
 
+You might need to install `trivy` for the security related tests.
+
 - `npm test` js unit tests and Dockerfile linting
 - `npm run test:dockerfile:security` runs security best practice static analysis on the Dockerfile (not on CI currently)
 
