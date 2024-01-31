@@ -11,12 +11,3 @@ isolate*.log
 debug-perf.txt
 dockerfile-security.rego
 .scannerwork/
-
-# Docs & External config
-.circleci/
-.github/
-helm/
-.licensed.yaml
-catalog-info.yaml
-CODE_OF_CONDUCT.md
-README.md

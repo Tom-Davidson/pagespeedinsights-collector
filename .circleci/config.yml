@@ -2,17 +2,16 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: docker:20.10.6-git
+      - image: docker:24.0.8-git
     steps:
       - checkout
-      - setup_remote_docker
-#     - setup_remote_docker:
-#         docker_layer_caching: true
+      - setup_remote_docker:
+          version: docker24
+          # docker_layer_caching: true
       - run:
           name: Install dependencies
           command: |
-            apk add --no-cache py-pip
-            pip install docker-compose==1.22.0
+            apk add --no-cache --update python3 py3-pip
             mkdir -p /artifacts
       - run:
           name: Build
@@ -51,6 +50,10 @@ jobs:
             IMAGE_VERSION="${VERSION}-${CIRCLE_BUILD_NUM}"
             trivy image --exit-code 0 --no-progress pagespeedinsights-collector:${IMAGE_VERSION} | tee /artifacts/trivy-all.txt
             trivy image --exit-code 0 --no-progress --ignore-unfixed pagespeedinsights-collector:${IMAGE_VERSION} | tee /artifacts/trivy-fixable.txt
+      - run:
+          name: Scan repo for secrets
+          command: |
+            trivy fs . | tee /artifacts/trivy-secrets.txt
       - run:
           name: Push Docker image
           command: |
@@ -92,7 +95,6 @@ jobs:
           path: /artifacts
 
 workflows:
-  version: 2
   build_and_test:
     jobs:
       - build
